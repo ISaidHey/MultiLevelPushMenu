@@ -112,9 +112,13 @@
 			// the menu should close if clicking somewhere on the body
 			var bodyClickFn = function( el ) {
 				self._resetMenu();
-				el.removeEventListener( self.eventtype, bodyClickFn );
+				el.removeEventListener( self.eventtype, body_listener );
 			};
-
+			var body_listener	= function(ev) {
+				if( self.open && !hasParent( ev.target, self.el.id ) ) {
+					bodyClickFn( this );
+				}
+			};
 			// open (or close) the menu
 			this.trigger.addEventListener( this.eventtype, function( ev ) {
 				ev.stopPropagation();
@@ -125,12 +129,7 @@
 				else {
 					self._openMenu();
 					// the menu should close if clicking somewhere on the body (excluding clicks on the menu)
-					document.addEventListener( self.eventtype, function( ev ) {
-						console.log('click');
-						if( self.open && !hasParent( ev.target, self.el.id ) ) {
-							bodyClickFn( this );
-						}
-					} );
+					document.addEventListener( self.eventtype, body_listener);
 				}
 			} );
 
